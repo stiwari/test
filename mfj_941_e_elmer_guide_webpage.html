@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MFJ-941E Versa Tuner II Maintenance — An Elmer-Guided Repair Log</title>
+  <style>
+    :root {
+      --bg: #f5f1e8;
+      --paper: #fffaf0;
+      --ink: #25211b;
+      --muted: #6f675b;
+      --line: #d8cab4;
+      --accent: #8a4f22;
+      --accent-soft: #ead7bf;
+      --dark: #1d1a16;
+      --green: #2d6a4f;
+      --warn: #9a4b1f;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: Georgia, "Times New Roman", serif;
+      background: radial-gradient(circle at top, #fff6e6 0, var(--bg) 45%, #ebe2d4 100%);
+      color: var(--ink);
+      line-height: 1.65;
+    }
+
+    header {
+      background: linear-gradient(135deg, #211b15, #56331e);
+      color: #fff8ea;
+      padding: 4rem 1.25rem 3.5rem;
+      text-align: center;
+      border-bottom: 8px solid var(--accent-soft);
+    }
+
+    header .eyebrow {
+      text-transform: uppercase;
+      letter-spacing: 0.18em;
+      font-size: 0.78rem;
+      color: #e1c9a7;
+      margin-bottom: 1rem;
+    }
+
+    h1 {
+      max-width: 950px;
+      margin: 0 auto;
+      font-size: clamp(2rem, 5vw, 4.5rem);
+      line-height: 1.05;
+      font-weight: 700;
+    }
+
+    header p {
+      max-width: 780px;
+      margin: 1.25rem auto 0;
+      font-size: 1.2rem;
+      color: #f1e3cf;
+    }
+
+    main {
+      width: min(1120px, calc(100% - 2rem));
+      margin: 2rem auto 4rem;
+    }
+
+    .panel {
+      background: rgba(255,250,240,0.92);
+      border: 1px solid var(--line);
+      border-radius: 24px;
+      padding: clamp(1.25rem, 3vw, 2rem);
+      box-shadow: 0 18px 40px rgba(71, 50, 28, 0.12);
+      margin-bottom: 1.5rem;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(12, 1fr);
+      gap: 1.25rem;
+    }
+
+    .span-7 { grid-column: span 7; }
+    .span-5 { grid-column: span 5; }
+    .span-6 { grid-column: span 6; }
+    .span-12 { grid-column: span 12; }
+
+    @media (max-width: 820px) {
+      .span-7, .span-5, .span-6 { grid-column: span 12; }
+    }
+
+    h2 {
+      font-size: clamp(1.55rem, 3vw, 2.35rem);
+      line-height: 1.15;
+      margin: 0 0 0.75rem;
+      color: #3b2416;
+    }
+
+    h3 {
+      font-size: 1.2rem;
+      margin: 1.5rem 0 0.35rem;
+      color: #4b2d19;
+    }
+
+    p { margin: 0.65rem 0; }
+
+    .lead {
+      font-size: 1.12rem;
+      color: #40372f;
+    }
+
+    .callout {
+      border-left: 5px solid var(--accent);
+      background: var(--accent-soft);
+      padding: 1rem 1.15rem;
+      border-radius: 14px;
+      margin: 1rem 0;
+    }
+
+    .note {
+      background: #f4efe6;
+      border: 1px dashed #b8a083;
+      padding: 1rem;
+      border-radius: 16px;
+      color: #443c35;
+    }
+
+    .timeline {
+      position: relative;
+      padding-left: 1.25rem;
+      margin-top: 1rem;
+    }
+
+    .timeline::before {
+      content: "";
+      position: absolute;
+      top: 0.25rem;
+      bottom: 0.25rem;
+      left: 0;
+      width: 3px;
+      background: var(--line);
+      border-radius: 99px;
+    }
+
+    .step {
+      position: relative;
+      padding: 0.65rem 0 0.65rem 1.2rem;
+    }
+
+    .step::before {
+      content: "";
+      position: absolute;
+      left: -1.63rem;
+      top: 1rem;
+      width: 13px;
+      height: 13px;
+      background: var(--accent);
+      border: 3px solid var(--paper);
+      border-radius: 50%;
+      box-shadow: 0 0 0 1px var(--accent);
+    }
+
+    .step strong {
+      display: block;
+      font-size: 1.05rem;
+      color: #2b2119;
+    }
+
+    ul {
+      padding-left: 1.2rem;
+      margin: 0.6rem 0;
+    }
+
+    li { margin: 0.35rem 0; }
+
+    code, pre {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    }
+
+    pre {
+      background: #211c17;
+      color: #f7ead7;
+      padding: 1rem;
+      border-radius: 16px;
+      overflow-x: auto;
+      line-height: 1.45;
+      font-size: 0.93rem;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 1rem 0;
+      background: #fffdf7;
+      border-radius: 14px;
+      overflow: hidden;
+    }
+
+    th, td {
+      border-bottom: 1px solid var(--line);
+      padding: 0.75rem;
+      text-align: left;
+      vertical-align: top;
+    }
+
+    th {
+      background: #eee0ca;
+      color: #332416;
+    }
+
+    tr:last-child td { border-bottom: 0; }
+
+    .tag {
+      display: inline-block;
+      padding: 0.2rem 0.55rem;
+      border-radius: 999px;
+      background: #efe1cc;
+      color: #5b351d;
+      font-size: 0.82rem;
+      margin: 0.15rem 0.2rem 0.15rem 0;
+      border: 1px solid #dcc4a6;
+    }
+
+    .quote {
+      font-size: 1.25rem;
+      font-style: italic;
+      color: #3d3128;
+      padding: 1rem 1.25rem;
+      border-left: 5px solid var(--green);
+      background: #eef4ed;
+      border-radius: 16px;
+    }
+
+    .footer {
+      text-align: center;
+      color: var(--muted);
+      padding: 2rem 1rem;
+      font-size: 0.95rem;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="eyebrow">Ham radio repair log</div>
+    <h1>Maintaining the MFJ-941E Versa Tuner II</h1>
+    <p>A practical repair and calibration journey, written as an Elmer-style guide from symptom to fix.</p>
+  </header>
+
+  <main>
+    <section class="panel grid">
+      <div class="span-7">
+        <h2>The story</h2>
+        <p class="lead">This page documents a hands-on troubleshooting session around an MFJ-941E Versa Tuner II. The work began with questions about higher power handling, moved through a successful meter-board repair, and ended with a sensible maintenance approach: protect the meter circuit, verify into a dummy load, and avoid unnecessary recalibration.</p>
+        <div class="callout">
+          <strong>Elmer-style takeaway:</strong> fix the actual fault first, then resist the temptation to “improve” every adjustment unless measurements show a real problem.
+        </div>
+      </div>
+      <div class="span-5 note">
+        <h3>Equipment discussed</h3>
+        <p><span class="tag">MFJ-941E</span><span class="tag">Versa Tuner II</span><span class="tag">SWR bridge</span><span class="tag">Twin meter</span><span class="tag">BAT41 diodes</span><span class="tag">Dummy load</span></p>
+        <p>The central repair was in the meter/detector section, not the main RF matching network.</p>
+      </div>
+    </section>
+
+    <section class="panel">
+      <h2>Repair timeline</h2>
+      <div class="timeline">
+        <div class="step">
+          <strong>1. Power-handling question</strong>
+          The first concern was whether the tuner could be pushed from its 300 W PEP class toward 500 W PEP. The answer: maybe briefly on SSB with a friendly load, but the real risk is RF voltage breakdown in the variable capacitors, switch wafers, and inductor area.
+        </div>
+        <div class="step">
+          <strong>2. Vacuum-cap T-network discussion</strong>
+          A high-power homebrew tuner using vacuum capacitors was considered. That design is rugged because vacuum variables tolerate much higher RF voltage than the modest air variables in smaller commercial tuners.
+        </div>
+        <div class="step">
+          <strong>3. Auto tuners compared</strong>
+          Relay auto tuners were compared with manual tuners. They are convenient and often cheaper at moderate power, but they are not automatically better for high mismatch, high voltage, or sustained-duty operation.
+        </div>
+        <div class="step">
+          <strong>4. Actual fault found</strong>
+          The failed parts were a resistor and two diodes in the meter/detector circuit. Replacing them restored normal behavior, showing that the fault was in the measuring circuit rather than the RF tuning path.
+        </div>
+        <div class="step">
+          <strong>5. Protection added</strong>
+          A small series resistor and suitable small-signal Schottky diodes were discussed to harden the sensitive meter circuit against future spikes.
+        </div>
+        <div class="step">
+          <strong>6. Calibration restraint</strong>
+          The four trimmers R5, R6, R7, and R8 were identified as bridge/meter calibration points. Since the watt and SWR readings were close enough, the final advice was to leave them alone.
+        </div>
+      </div>
+    </section>
+
+    <section class="panel grid">
+      <div class="span-6">
+        <h2>What failed</h2>
+        <p>The replaced resistor and two diodes sit in the SWR/wattmeter detector area. Their job is to turn sampled RF into DC for the analog meter movement.</p>
+        <p>When those parts fail, the tuner may still match antennas, but the meter indication becomes wrong, dead, erratic, or misleading.</p>
+        <h3>Likely causes</h3>
+        <ul>
+          <li>High mismatch while transmitting</li>
+          <li>RF spikes into the detector circuit</li>
+          <li>Static or accidental overload</li>
+          <li>Meter circuit stress before the larger RF parts fail</li>
+        </ul>
+      </div>
+      <div class="span-6">
+        <h2>What the fix changed</h2>
+        <p>Replacing the detector parts restored the meter circuit. Adding modest protection makes the meter less fragile, but it does not increase the RF power rating of the tuner.</p>
+        <pre>RF sample → detector diodes → scaling resistor → meter
+
+Optional protection:
+Meter terminals → back-to-back small-signal diodes
+Detector output → small series resistor → meter</pre>
+      </div>
+    </section>
+
+    <section class="panel">
+      <h2>Meter protection notes</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Part or mod</th>
+            <th>Purpose</th>
+            <th>Practical conclusion</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>BAT41 diodes</td>
+            <td>Small-signal Schottky detector/protection diodes</td>
+            <td>Suitable in the low-level meter/detector section.</td>
+          </tr>
+          <tr>
+            <td>1 kΩ series resistor</td>
+            <td>Limits surge current into the meter movement</td>
+            <td>Reasonable protection with modest calibration impact.</td>
+          </tr>
+          <tr>
+            <td>10 kΩ+ series resistor</td>
+            <td>Much heavier current limiting</td>
+            <td>Can make the meter insensitive and require recalibration.</td>
+          </tr>
+          <tr>
+            <td>Extra RF bypass capacitor</td>
+            <td>Smoothing and RF cleanup</td>
+            <td>Skip it if the board already has detector caps; too much capacitance can slow or alter readings.</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="panel grid">
+      <div class="span-6">
+        <h2>About R5, R6, R7, and R8</h2>
+        <p>The four trimmers are factory calibration controls for the bridge and twin meter system. They are not routine user controls.</p>
+        <div class="callout">
+          <strong>Best practice:</strong> if the tuner reads about 1:1 into a 50 Ω dummy load and forward power is close enough, do not adjust them.
+        </div>
+      </div>
+      <div class="span-6">
+        <h2>Safe calibration logic</h2>
+        <ul>
+          <li>Use a 50 Ω dummy load as the reference load.</li>
+          <li>Use low RF power first, around 10–20 W.</li>
+          <li>Null reflected power before chasing watt-scale accuracy.</li>
+          <li>Use an external wattmeter if absolute watt readings matter.</li>
+          <li>Make tiny adjustments only, and record original positions before turning anything.</li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="panel">
+      <h2>Power rating reality check</h2>
+      <p>A key lesson from the repair was that fixing the meter does not change the RF limits of the tuner. The 300 W PEP SSB rating should not be treated as a 300 W continuous-duty rating.</p>
+      <table>
+        <thead>
+          <tr>
+            <th>Mode</th>
+            <th>How to think about it</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>SSB voice</td>
+            <td>Low average duty cycle; closest to the tuner’s advertised PEP use case.</td>
+          </tr>
+          <tr>
+            <td>CW</td>
+            <td>More sustained stress; use less power than the SSB PEP rating.</td>
+          </tr>
+          <tr>
+            <td>FT8 / RTTY / digital</td>
+            <td>High duty cycle; much harder on small tuners, switches, inductors, and capacitors.</td>
+          </tr>
+        </tbody>
+      </table>
+      <p>Low SWR at the transmitter is useful, but it does not prove the tuner is cool, efficient, or free from high circulating current inside the network.</p>
+    </section>
+
+    <section class="panel">
+      <h2>Final operating checklist</h2>
+      <ul>
+        <li>Tune at low power first.</li>
+        <li>Check the tuner into a proper dummy load after any meter-board work.</li>
+        <li>Trust the SWR dip more than exact wattmeter numbers.</li>
+        <li>Keep the inside clean and dry to reduce arcing risk.</li>
+        <li>Do not assume meter protection increases RF power handling.</li>
+        <li>Leave calibration trimmers alone once readings are close enough.</li>
+      </ul>
+    </section>
+
+    <section class="panel">
+      <div class="quote">
+        “The repair was successful because the problem was isolated: the detector and meter section had failed, while the RF tuner path was still fundamentally intact.”
+      </div>
+      <p style="margin-top:1rem;">That is the heart of the Elmer lesson here: diagnose first, make the smallest effective repair, verify with a dummy load, and avoid turning a working tuner into a calibration project.</p>
+    </section>
+      <section class="panel">
+      <h2>Repair photo and highlighted components</h2>
+      <p>This is the actual repair area near the SO-239 connectors. The key components replaced and added during the repair are identified below.</p>
+
+      <div style="text-align:center; margin:1rem 0;">
+        <img src="/mnt/data/WhatsApp Image 2026-04-24 at 16.01.34.jpeg" alt="MFJ-941E repair area" style="max-width:100%; border-radius:16px; box-shadow:0 10px 25px rgba(0,0,0,0.15);" />
+      </div>
+
+      <h3>Highlighted areas (refer to image)</h3>
+      <ul>
+        <li><strong>150 Ω 3W resistor (top center-right):</strong> The large horizontal grey resistor near the SO-239 connectors. This was replaced after failure.</li>
+        <li><strong>Original detector diodes (just below resistor):</strong> The two small diodes beneath the resistor that were burnt and replaced. These form part of the RF detector for the meter circuit.</li>
+        <li><strong>Back-to-back protection diodes (lower left near meter wiring):</strong> Added across the meter terminals to clamp voltage spikes and protect the sensitive movement.</li>
+        <li><strong>1 kΩ series resistor (lower left wiring):</strong> Inserted in series with the meter lead to limit current and reduce stress during transients.</li>
+      </ul>
+
+      <div class="callout">
+        <strong>Practical takeaway:</strong> The failure occurred in the detector/meter section, not the RF tuning network. The repair and added protection focus entirely on preserving the meter circuit from future overload.
+      </div>
+    </section>
+
+  </main>
+
+  <div class="footer">
+    MFJ-941E Versa Tuner II maintenance notes — prepared from a practical repair conversation.
+  </div>
+</body>
+</html>
